@@ -1,3 +1,3 @@
-It's all math.
+This program displays (and/or saves) a list of networks based on user input, the subnet mask as an IP and CIDR, and how many users per network. It's all math.
 
-Program is not fully optimized, but it gets it done. Functions avoided so the program looks like a sequence.
+The program is not fully optimized, but it gets it done. Functions are avoided so the program looks like a sequence.
