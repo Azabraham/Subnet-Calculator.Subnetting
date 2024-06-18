@@ -1,4 +1,4 @@
-from math import log
+from math import log2
 
 IPClass = "a"
 IP = "10.0.0.0"
@@ -51,10 +51,14 @@ elif IPClass=="c":
 
 #Third input: number of networks, and input validation
 while True:
-    networks = int(input("Enter number of networks: "))
+    try:
+        networks = int(input("Enter number of networks: "))
+    except:
+        print("Enter a number from 0 -", maxNetworks)
+        continue
 
     if networks>0 and networks <= maxNetworks:
-        holder = log(networks)/log(2) # This is used to determine if network input is possible
+        holder = log2(networks) # This is used to determine if network input is possible
         if holder!=holder//1: # if it is not possible, then holder would be a decimal, and it would need to be adjusted
             networks = 2**((holder//1)+1)
             networks = int(networks)
@@ -112,6 +116,9 @@ if not customRange and networks > 1:
 if customRange:
     while True: # ask for the range, and input validate. This should return a list with all networks to process
         inp = input("Enter range | Format [34-40] or [12, 14-18] >> ")
+        if inp == "":
+            print("Enter any range or number between 1 and",networks)
+            continue
         if not inp[len(inp)-1].isdigit():
             print("Try again. Range does not end in", inp[len(inp)-1])
             continue
@@ -147,8 +154,8 @@ if customRange:
             else:
                 inp.append(i-1)#-1 because ^
         inp = sorted(inp)
-        if len(inp)<=1024:
-            if inp[len(inp)-1]<networks:
+        if len(inp)<=1024: # if we have more than 1024 networks total to display...
+            if inp[len(inp)-1]<networks and inp[0] > 0:
                 break
             else:
                 print("One of your networks is outside the range [1 -", networks, "]")
@@ -361,7 +368,7 @@ else: # Engine 2, "Regular subnetting:" Prints or saves everything using differe
 
 # Subnet Mask: This part generates the subnet mask as an IP address and as CIDR and prints it or saves it
 
-CIDR = log(networks) / log(2) + defaultCIDR
+CIDR = log2(networks) + defaultCIDR
 
 CIDR = int(CIDR)
 
