@@ -155,7 +155,7 @@ if customRange:
                 inp.append(i-1)#-1 because ^
         inp = sorted(inp)
         if len(inp)<=1024: # if we have more than 1024 networks total to display...
-            if inp[len(inp)-1]<networks and inp[0] > 0:
+            if inp[len(inp)-1]<networks and inp[0] >= 0:
                 break
             else:
                 print("One of your networks is outside the range [1 -", networks, "]")
