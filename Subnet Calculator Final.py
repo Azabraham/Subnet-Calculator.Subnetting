@@ -87,7 +87,7 @@ while True:
 if not saveToFile:
     inp = input("Would you like to save to file? (y/n): ")
     inp = inp.lower()
-    if inp == "": # If user just presses enter, by default it will not print
+    if inp == "": # If user just presses enter, by default it will not save
         saveToFile = False
     elif inp[0]=="y" or inp == "yes" or inp == "1":
         saveToFile = True
@@ -98,7 +98,7 @@ if saveToFile:
     inp = input("Enter file name: ") + ".txt"
     f = open(inp, 'w') # This could be improved by checking if file already exists
 
-# Program asks if all networks are displayed or saved, if not, a different way to come to the answer is used.
+# Program asks if all networks are displayed or saved, if not, a different way to get to the answer is used.
 if not customRange and networks > 1:
     if saveToFile:
         inp = input("Save all networks to file? (y/n): ")
@@ -147,14 +147,14 @@ if customRange:
                 m = i[1]
                 if k < m:
                     for x in range(k, m+1):
-                        inp.append(x-1) #-1 becase formula for custom range engine processes numbers as index: starting at 0 
+                        inp.append(x-1) #-1 because formula for custom range engine processes numbers as index: starting at 0 
                 else:
                     for y in range(m, k+1):
                         inp.append(y-1)#-1 because ^
             else:
                 inp.append(i-1)#-1 because ^
         inp = sorted(inp)
-        if len(inp)<=1024: # if we have more than 1024 networks total to display...
+        if len(inp)<=1024: # if we have more than 1024 total networks to display...
             if inp[len(inp)-1]<networks and inp[0] >= 0:
                 break
             else:
