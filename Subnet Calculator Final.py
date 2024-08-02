@@ -42,8 +42,11 @@ elif IPClass=="c":
     maxNetworks = 64
     while True:
         IP = input("Enter IP: ")
-        IPsplit = IP.split(".")
-        IPsplit = list(map(int, IPsplit))
+        try:
+            IPsplit = IP.split(".")
+            IPsplit = list(map(int, IPsplit))
+        except:
+            print("IP addresses have dots and numbers 0-255 [#.#.#.#]") ; continue
         if IPsplit[0]==192 and IPsplit[1]==168 and IPsplit[2]>=0 and IPsplit[2]<256  and IPsplit[3]==0:
             break
         else:
@@ -54,7 +57,7 @@ while True:
     try:
         networks = int(input("Enter number of networks: "))
     except:
-        print("Enter a number from 0 -", maxNetworks)
+        print("Enter a number from 1 -", maxNetworks)
         continue
 
     if networks>0 and networks <= maxNetworks:
@@ -67,7 +70,10 @@ while True:
         if networks>1024: # if input says we have to print more than 1024, it could cause issues in some terminals,
             # so we give two options
             while True:
-                inp = int(input("Too many networks to display. 2 options:\nType 1) Save to file\nType 2) Display custom range\n Your answer >> "))
+                try:
+                    inp = int(input("Too many networks to display. 2 options:\nType 1) Save to file\nType 2) Display custom range\n Your answer >> "))
+                except:
+                    print("Enter a number") ; continue
                 if inp==1:
                     saveToFile = True
                     printVal = False
@@ -76,7 +82,7 @@ while True:
                     customRange = True
                     break
                 else:
-                    print("Incorrect option")
+                    print("No such option")
             break
         else:
             break
