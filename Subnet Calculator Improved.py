@@ -264,46 +264,46 @@ if customRange:
     print()
     #Depending on the network, we print the selected networks that are stored in inp
     if IPClass=="a":
+        IPsplit = [10, 0, 0, 0]
+        usersPerNetwork = int(16777216 / networks)
+        if networks <= 256:
+            increment = 256 / networks
+            increment = int(increment)
+            h2 = increment - 1
+        elif networks <= 65536:
+            increment = 65536 / networks
+            increment = int(increment)
+            h2 = increment - 1
+        else:
+            increment = 16777216 / networks
+            increment = int(increment)
+            h2 = increment - 1
         for i in inp:
-            IPsplit = [10, 0, 0, 0]
-            usersPerNetwork = int(16777216 / networks)
             if networks <= 256:
-                increment = 256 / networks
-                increment = int(increment)
-                h2 = increment - 1
-                network = i
-                Oct2 = increment * network
-                string1 = "Network "+str(network+1)+") 10."+str(Oct2)+".0.0 - 10."+str(Oct2+h2)+".255.255"
+                Oct2 = increment * i
+                string1 = "Network "+str(i+1)+") 10."+str(Oct2)+".0.0 - 10."+str(Oct2+h2)+".255.255"
                 if printVal:
                     print(string1)
                 if saveToFile:
                     f.write(string1)
                     f.write("\n")
             elif networks <= 65536:
-                increment = 65536 / networks
-                increment = int(increment)
-                h2 = increment - 1
-                network = i
-                value = increment * network
+                value = increment * i
                 Oct2 = value//256
                 Oct3 = value%256
-                string1 = "Network "+ str(network+1)+") 10."+str(Oct2)+"."+str(Oct3)+".0 - 10."+str(Oct2)+"."+str(Oct3+h2)+".255"
+                string1 = "Network "+ str(i+1)+") 10."+str(Oct2)+"."+str(Oct3)+".0 - 10."+str(Oct2)+"."+str(Oct3+h2)+".255"
                 if printVal:
                     print(string1)
                 if saveToFile:
                     f.write(string1)
                     f.write("\n")
             elif networks <=4194304:
-                increment = 16777216 / networks
-                increment = int(increment)
-                h2 = increment - 1
-                network = i
-                value = network * increment
+                value = i * increment
                 Oct4 = value%256
                 value2 = value//256
                 Oct2 = value2//256
                 Oct3 = value2%256
-                string1 = "Network "+str(network+1)+") 10."+str(Oct2)+"."+str(Oct3)+"."+str(Oct4)+ " - 10."+str(Oct2)+"."+str(Oct3)+"."+str(Oct4+h2)
+                string1 = "Network "+str(i+1)+") 10."+str(Oct2)+"."+str(Oct3)+"."+str(Oct4)+ " - 10."+str(Oct2)+"."+str(Oct3)+"."+str(Oct4+h2)
                 if printVal:
                     print(string1)
                 if saveToFile:
@@ -312,22 +312,19 @@ if customRange:
             else:
                 print("Error, invalid network")
     elif IPClass=="b":
+        usersPerNetwork = int(65536 / networks)
+        if networks<=256:
+            increment = 256 / networks
+            increment = int(increment)
+        else:
+            increment = 65536 / networks
+            increment = int(increment)
+        h2 = increment - 1
         for i in inp:
-            usersPerNetwork = int(65536 / networks)
-            network = i
+            base = i * increment
             if networks<=256:
-                increment = 256 / networks
-                increment = int(increment)
-            else:
-                increment = 65536 / networks
-                increment = int(increment)
-
-            h2 = increment - 1
-            base = network * increment
-            # print(base)
-            if networks<=256:
-                Oct3 = increment * network
-                string1 = "Network "+str(network+1)+") 172.16."+str(Oct3)+".0 - 172.16."+str(Oct3+h2)+".255"
+                Oct3 = increment * i
+                string1 = "Network "+str(i+1)+") 172.16."+str(Oct3)+".0 - 172.16."+str(Oct3+h2)+".255"
                 if printVal:
                     print(string1)
                 if saveToFile:
@@ -340,21 +337,20 @@ if customRange:
                 else:
                     Oct4 = base % 256
                     Oct3 = base // 256
-                string1 = "Network "+str(network+1)+") 172.16."+str(Oct3)+"."+str(Oct4)+ " - 172.16."+str(Oct3)+"."+str(Oct4+h2)
+                string1 = "Network "+str(i+1)+") 172.16."+str(Oct3)+"."+str(Oct4)+ " - 172.16."+str(Oct3)+"."+str(Oct4+h2)
                 if printVal:
                     print(string1)
                 if saveToFile:
                     f.write(string1)
                     f.write("\n")
     elif IPClass=="c":
+        increment = 256 / networks
+        increment = int(increment)
+        usersPerNetwork = increment
+        h2 = increment - 1
         for i in inp:
-            increment = 256 / networks
-            increment = int(increment)
-            usersPerNetwork = increment
-            h2 = increment - 1
-            network = i
-            Oct2 = increment * network
-            string1 = "Network "+str(network+1)+") 192.168.22."+str(Oct2) + " - 192.168.22."+str(Oct2+h2)
+            Oct2 = increment * i
+            string1 = "Network "+str(i+1)+") 192.168."+str(IPsplit[2])+"."+str(Oct2) + " - 192.168."+str(IPsplit[2])+"."+str(Oct2+h2)
             if printVal:
                 print(string1)
             if saveToFile:
