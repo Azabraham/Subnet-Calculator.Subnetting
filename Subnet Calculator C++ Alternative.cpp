@@ -18,24 +18,22 @@ bool custom_isdigit(string a) {
 }
 vector<string> customSplit_vector(string what, char condition) {
 	string val = "";
-	vector<string> ran;
+	vector<string> returned;
 	int currentIndex = 0;
 	if (what[what.length() - 1] != condition) {
 		what += condition;
-		// EXPAND THIS SECTIONto handle 192...0 or 192... as inputs?
 	}
 	for (int i = 0; i < what.length(); i++) {
 		if ((isdigit(what[i]) != 0 || what[i] == '-') && what[i] != condition) {
 			val += what[i];
 		}
 		else if (val.length() > 0) {
-			ran.push_back(val);
+			returned.push_back(val);
 			currentIndex++;
 			val = "";
 		}
 	}
-	return ran;
-
+	return returned;
 }
 string popnondigitconsecutives(string what) {
 	for (int i = 0; i < what.length() - 1; i++) {
@@ -46,48 +44,43 @@ string popnondigitconsecutives(string what) {
 	}
 	return what;
 }
-int customFunction(string a) {
-	int val1 = stoi(a);
-	return val1;
-}
-vector<int> customFormat(string what) {
+void customFormat(string what, vector<int> &range) {
 	string one = "";
 	vector<string> two;
 	vector<string> three;
-	vector<int> returned;
+
 	for (char c : what) {
 		if (isdigit(c) != 0 || c == ' ' || c == '-') {
 			one += c;
 		}
 	}
+
 	one = popnondigitconsecutives(one); // just in case
 	two = customSplit_vector(one, ' ');
 
-	int val1; //= stoi(a[0]);
-	int val2; //= stoi(a[1]);
+	int val1;
+	int val2;
 	for (string c : two) {
 		if (custom_isdigit(c)) {
-			returned.push_back(stoi(c));
+			range.push_back(stoi(c));
 		}
 		else {
 			three = customSplit_vector(c, '-');
-			//four = customFunction(three);
-			val1 = customFunction(three[0]);
-			val2 = customFunction(three[1]);
+			val1 = stoi(three[0]);
+			val2 = stoi(three[1]);
 			if (val1 <= val2) {
 				for (int i = val1; i < val2 + 1; i++) {
-					returned.push_back(i);
+					range.push_back(i);
 				}
 			}
 			else {
 				for (int i = val2; i < val1 + 1; i++) {
-					returned.push_back(i);
+					range.push_back(i);
 				}
 			}
 
 		}
 	}
-	return returned;
 }
 int customCount(int what[], int condition) {
 	int count = 0;
@@ -138,7 +131,7 @@ void customSplit(string what, char condition, int IPSplit[]) {
 			IPSplit[currentIndex] = stoi(val); //handle exceptions
 			currentIndex++;
 			val = "";
-		}	
+		}
 	}
 }
 string customReplace(string what, char replaced, char by) {
@@ -153,7 +146,7 @@ string customReplace(string what, char replaced, char by) {
 
 
 int main() {
-	
+
 	char IPClass = 'a';
 	int defaultCIDR = 8;
 	string IP = "10.0.0.0";
@@ -386,7 +379,7 @@ int main() {
 	int h2 = 0;
 	{
 		double h3 = (defaultCIDR + log2(networks));
-		
+
 		if (h3 / 8.0 != floor(h3 / 8)) {
 			increment = pow(2, (((floor(h3 / 8) + 1) * 8) - h3));
 		}
@@ -401,18 +394,16 @@ int main() {
 	}
 	if (!displayAll) {
 		while (true) {
-			string inp2 = "";
+			inp = "";
 			cin.ignore();
 			cout << "Enter range [Ex: \"17, 19-22, 24\"]: ";
-			getline(cin, inp2);
+			getline(cin, inp);
 
-			inp = inp2;
-
-			range = customFormat(inp);
+			customFormat(inp, range);
 			sort(range.begin(), range.end());
 
 			if (range[0] == 0 || range[range.size() - 1] > maxNetworks) {
-				cout << "Out of bounds. Range is 1 - "<<maxNetworks << endl;
+				cout << "Out of bounds. Range is 1 - " << maxNetworks << endl;
 				continue;
 			}
 			else {
@@ -421,7 +412,7 @@ int main() {
 
 		}
 	}
-
+	
 	cout << "\n";
 	if (displayAll) {
 		if (IPClass == 'a') {
@@ -455,7 +446,7 @@ int main() {
 					}
 				}
 			}
-			
+
 		}
 		else if (IPClass == 'b') {
 			int val = IPSplit[1];
@@ -482,7 +473,6 @@ int main() {
 				cout << "Network " << i + 1 << ") 192.168." << IPSplit[2] << "." << IPSplit[3] << " - 192.168." << IPSplit[2] << "." << IPSplit[3] + h2 << "\n";
 				IPSplit[3] += increment;
 			}
-			
 		}
 	}
 	else {
@@ -506,7 +496,7 @@ int main() {
 					holder = floor((i - 1) * increment / 256);
 					IPSplit[1] = floor(holder / 256);
 					IPSplit[2] = holder % 256;
-					IPSplit[3] = ((i-1) * increment) % 256;
+					IPSplit[3] = ((i - 1) * increment) % 256;
 					cout << "Network " << i + 1 << ") 10." << IPSplit[1] << "." << IPSplit[2] << "." << IPSplit[3] << " - 10." << IPSplit[1] << "." << IPSplit[2] << "." << IPSplit[3] + h2 << "\n";
 				}
 			}
@@ -529,15 +519,15 @@ int main() {
 		else {
 			for (int i : range) {
 				IPSplit[3] = (i - 1) * increment;
-				cout << "Network " << i << ") 192.168." << IPSplit[2] << "." << IPSplit[3] << " - 192.168." << IPSplit[2] << "."  << IPSplit[3] + h2 << "\n";
+				cout << "Network " << i << ") 192.168." << IPSplit[2] << "." << IPSplit[3] << " - 192.168." << IPSplit[2] << "." << IPSplit[3] + h2 << "\n";
 			}
 		}
 	}
-	
+
 	if (!gotCIDR) {
 		CIDR = log2(networks) + defaultCIDR;
 	}
-	
+
 	if (!gotMask) {
 		string maske = "";
 		maske = customMul("255.", CIDR / 8);
@@ -546,16 +536,14 @@ int main() {
 			customSplit(maske, '.', mask);
 		}
 		else {
-			/*maske = customMul("255.", floor(CIDR / 4));
-			(CIDR % 4)*/
-			int value = 256 - pow (2, (8 - (CIDR % 8))); // simplify
+			int value = 256 - pow(2, (8 - (CIDR % 8))); // simplify
 			maske += to_string(value) + ".";
 			maske += customMul("0.", (4 - customCount(maske, '.')));
 			customSplit(maske, '.', mask);
 		}
 	}
 	cout << "\nSubnet mask: " << mask[0] << "." << mask[1] << "." << mask[2] << "." << mask[3] << " | /" << CIDR << endl;
-	
+
 	if (networks == 1)
 		cout << endl << networks << " network with " << maxNetworks * 4 << " users." << endl;
 	else
