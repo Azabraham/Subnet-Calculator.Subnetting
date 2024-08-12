@@ -83,7 +83,7 @@ while True:
             CIDR = inp
             # break
         else:
-            print("Out of bounds. CIDR for this class is [%1d to 30]" % defaultCIDR);continue
+            print("Out of bounds. CIDR for this class is [%d to 30]" % defaultCIDR);continue
     elif inp.count(".")==0: # num
         try:
             networks = int(inp)
@@ -96,7 +96,7 @@ while True:
                 networks = int(networks)
                 print("Networks updated to ", networks)
         else:
-            print("Out of bounds. Number of networks for this class are [1 to %2d]" % maxNetworks) ; continue
+            print("Out of bounds. Number of networks for this class are [1 to %d]" % maxNetworks) ; continue
     else: # IP
         while True:
             if inp[-1]!=".":
@@ -136,7 +136,7 @@ while True:
             holder = log2(256 - inp[i+1])
             if inp[i+1]>inp[i] or holder != (holder//1) or inp[i]!=255 and inp[i+1]!=0:
                 h2 = True
-                print("Invalid Subnet Mask: %2d is not a valid octet" % inp[i+1])
+                print("Invalid Subnet Mask: %d is not a valid octet" % inp[i+1])
                 break
 
         if h2:
@@ -155,7 +155,7 @@ while True:
                 gotMask = True
                 # break
             else:
-                print("It's not practical to have the last octet as %2d" % inp[-1]) ; continue
+                print("It's not practical to have the last octet as %d" % inp[-1]) ; continue
     
     if networks>1024: # if input says we have to print more than 1024, it could cause issues in some terminals,
         # so we give two options
@@ -211,7 +211,7 @@ if customRange:
     while True: # ask for the range, and input validate. This should return a list with all networks to process
         inp = input("Enter range | Format [34-40] or [12, 14-18] >> ")
         if inp == "":
-            print("Enter any range or number between 1 and",networks)
+            print("Enter any range or number between 1 and", networks)
             continue
         if not inp[len(inp)-1].isdigit():
             print("Try again. Range does not end in", inp[len(inp)-1])
@@ -266,108 +266,90 @@ if customRange:
     if IPClass=="a":
         IPsplit = [10, 0, 0, 0]
         usersPerNetwork = int(16777216 / networks)
+
         if networks <= 256:
-            increment = 256 / networks
-            increment = int(increment)
+            increment = int(256 / networks)
             h2 = increment - 1
+            for i in inp:
+                string1 = f"Network {i+1}) 10.{increment * i}.0.0 - 10.{increment * i + h2}.255.255"
+                if printVal:
+                    print(string1)
+                if saveToFile:
+                    f.write(string1)
+                    f.write("\n")
         elif networks <= 65536:
-            increment = 65536 / networks
-            increment = int(increment)
+            increment = int(65536 / networks)
             h2 = increment - 1
-        else:
-            increment = 16777216 / networks
-            increment = int(increment)
-            h2 = increment - 1
-        for i in inp:
-            if networks <= 256:
-                Oct2 = increment * i
-                string1 = "Network "+str(i+1)+") 10."+str(Oct2)+".0.0 - 10."+str(Oct2+h2)+".255.255"
+            for i in inp:
+                IPsplit[1] = (increment * i)//256
+                IPsplit[2] = (increment * i)%256
+                string1 = f"Network {i+1}) 10.{IPsplit[1]}.{IPsplit[2]}.0 - 10.{IPsplit[1]}.{IPsplit[2] + h2}.255"
                 if printVal:
                     print(string1)
                 if saveToFile:
                     f.write(string1)
                     f.write("\n")
-            elif networks <= 65536:
-                value = increment * i
-                Oct2 = value//256
-                Oct3 = value%256
-                string1 = "Network "+ str(i+1)+") 10."+str(Oct2)+"."+str(Oct3)+".0 - 10."+str(Oct2)+"."+str(Oct3+h2)+".255"
-                if printVal:
-                    print(string1)
-                if saveToFile:
-                    f.write(string1)
-                    f.write("\n")
-            elif networks <=4194304:
+        elif networks <=4194304:
+            increment = int(16777216 / networks)
+            h2 = increment - 1
+            for i in inp:
                 value = i * increment
-                Oct4 = value%256
-                value2 = value//256
-                Oct2 = value2//256
-                Oct3 = value2%256
-                string1 = "Network "+str(i+1)+") 10."+str(Oct2)+"."+str(Oct3)+"."+str(Oct4)+ " - 10."+str(Oct2)+"."+str(Oct3)+"."+str(Oct4+h2)
+                IPsplit[3] = value%256
+                value = value//256
+                IPsplit[1] = value//256
+                IPsplit[2] = value%256
+                string1 = f"Network {i+1}) 10.{IPsplit[1]}.{IPsplit[2]}.{IPsplit[3]} - 10.{IPsplit[1]}.{IPsplit[2]}.{IPsplit[3]+h2}"
                 if printVal:
                     print(string1)
                 if saveToFile:
                     f.write(string1)
                     f.write("\n")
-            else:
-                print("Error, invalid network")
+        else:
+            print("Error, invalid network") # why did I put this...
     elif IPClass=="b":
         usersPerNetwork = int(65536 / networks)
         if networks<=256:
-            increment = 256 / networks
-            increment = int(increment)
+            increment = int(256 / networks)
+            h2 = increment - 1
+            for i in inp:
+                string1 = f"Network {i+1}) 172.{IPsplit[1]}.{increment*i}.0 - 172.{IPsplit[1]}.{increment * i + h2}.255"
+                if printVal:
+                    print(string1)
+                if saveToFile:
+                    f.write(string1)
+                    f.write("\n")
         else:
-            increment = 65536 / networks
-            increment = int(increment)
-        h2 = increment - 1
-        for i in inp:
-            base = i * increment
-            if networks<=256:
-                Oct3 = increment * i
-                string1 = "Network "+str(i+1)+") 172.16."+str(Oct3)+".0 - 172.16."+str(Oct3+h2)+".255"
+            increment = int(65536 / networks)
+            h2 = increment - 1
+            for i in inp:
+                IPsplit[3] = (increment*i) % 256
+                IPsplit[2] = (increment*i) // 256
+                string1 = f"Network {i+1}) 172.{IPsplit[1]}.{IPsplit[2]}.{IPsplit[3]} - 172.{IPsplit[1]}.{IPsplit[2]}.{IPsplit[3]+h2}"
                 if printVal:
                     print(string1)
                 if saveToFile:
                     f.write(string1)
-                    f.write("\n")
-            else:
-                if base<256:
-                    Oct4 = base
-                    Oct3 = 0
-                else:
-                    Oct4 = base % 256
-                    Oct3 = base // 256
-                string1 = "Network "+str(i+1)+") 172.16."+str(Oct3)+"."+str(Oct4)+ " - 172.16."+str(Oct3)+"."+str(Oct4+h2)
-                if printVal:
-                    print(string1)
-                if saveToFile:
-                    f.write(string1)
-                    f.write("\n")
+                    f.write("\n")     
     elif IPClass=="c":
-        increment = 256 / networks
-        increment = int(increment)
+        increment = int(256 / networks)
         usersPerNetwork = increment
         h2 = increment - 1
         for i in inp:
-            Oct2 = increment * i
-            string1 = "Network "+str(i+1)+") 192.168."+str(IPsplit[2])+"."+str(Oct2) + " - 192.168."+str(IPsplit[2])+"."+str(Oct2+h2)
+            string1 = f"Network {i+1}) 192.168.{IPsplit[2]}.{increment * i} - 192.168.{IPsplit[2]}.{increment * i + h2}"
             if printVal:
                 print(string1)
             if saveToFile:
                 f.write(string1)
                 f.write("\n")
-else: # Engine 2, "Regular subnetting:" Prints or saves everything using different method
+else: # Engine 2, "Regular subnetting:" Prints or saves everything using a different method
     print()
     if IPClass == "a":
         usersPerNetwork = int(16777216 / networks)
         if networks <= 256:
-            increment = 256 / networks
-            increment = int(increment)
+            increment = int(256 / networks)
             h2 = increment - 1
             for i in range(networks):
-                net=str(IPsplit[0]) + "." + str(IPsplit[1]) + "." + str(IPsplit[2]) + "." + str(IPsplit[3])
-                net1 = str(IPsplit[0]) + "." + str(h2) + ".255.255"
-                string1 = "Network " + str(i+1)+ ") " + str(net) + " - " + str(net1)
+                string1 = f"Network {i+1}) 10.{IPsplit[1]}.0.0 - 10.{h2}.255.255"
                 if printVal:
                     print(string1)
                 IPsplit[1]+=increment
@@ -376,11 +358,10 @@ else: # Engine 2, "Regular subnetting:" Prints or saves everything using differe
                     f.write(string1)
                     f.write("\n")
         elif networks <= 65536:
-            increment = 16777216 / (networks * 256)
-            increment = int(increment)
+            increment = int(65536 / networks)
             h2 = increment - 1
             for i in range(networks):
-                string1 = "Network " + str(i+1) +") " + "10."+str(IPsplit[1]) +"."+ str(IPsplit[2]) + "."+str(IPsplit[3]) + " - 10."+str(IPsplit[1])+"."+str(IPsplit[2]+h2) +".255"
+                string1 = f"Network {i+1}) 10.{IPsplit[1]}.{IPsplit[2]}.0 - 10.{IPsplit[1]}.{IPsplit[2]+h2}.255"
                 if printVal:
                     print(string1)
                 if saveToFile:
@@ -391,11 +372,10 @@ else: # Engine 2, "Regular subnetting:" Prints or saves everything using differe
                     IPsplit[1]+=1
                     IPsplit[2]=0
         elif networks <=4194304:
-            increment = 16777216 / networks
-            increment = int(increment)
+            increment = int(16777216 / networks)
             h2 = increment - 1
             for i in range(networks):
-                string1 = "Network "+str(i+1)+ ") " + "10."+str(IPsplit[1]) +"."+ str(IPsplit[2]) + "."+str(IPsplit[3]) + " - "+ "10."+str(IPsplit[1])+"."+str(IPsplit[2]) +"."+str(IPsplit[3]+h2)
+                string1 = f"Network {i+1}) 10.{IPsplit[1]}.{IPsplit[2]}.{IPsplit[3]} - 10.{IPsplit[1]}.{IPsplit[2]}.{IPsplit[3] + h2}"
                 if printVal:
                     print(string1)
                 if saveToFile:
@@ -411,13 +391,10 @@ else: # Engine 2, "Regular subnetting:" Prints or saves everything using differe
     elif IPClass=="b":
         usersPerNetwork = int(65536 / networks)
         if networks <= 256:
-            increment = 256 / networks
-            increment = int(increment)
+            increment = int(256 / networks)
             h2 = increment - 1
             for i in range(networks):
-                net=str(IPsplit[0]) + "." + str(IPsplit[1]) + "." + str(IPsplit[2]) + "." + str(IPsplit[3])
-                net1 = str(IPsplit[0]) + "." + str(IPsplit[1]) + "." + str(h2) + ".255"
-                string1 = "Network " + str(i+1) + ") " + str(net) + " - " + str(net1)
+                string1 = f"Network {i+1}) 172.{IPsplit[1]}.{IPsplit[2]}.0 - 172.{IPsplit[1]}.{h2}.255"
                 if printVal:
                     print(string1)
                 if saveToFile:
@@ -426,33 +403,30 @@ else: # Engine 2, "Regular subnetting:" Prints or saves everything using differe
                 IPsplit[2]+=increment
                 h2+=increment
         else:
-            increment = 65536 / networks
-            increment = int(increment)
+            increment = int(65536 / networks)
             h2 = increment - 1
             for i in range(networks):
-                net=str(IPsplit[0]) + "." + str(IPsplit[1]) + "." + str(IPsplit[2]) + "." + str(IPsplit[3])
-                net1 = str(IPsplit[0]) + "." + str(IPsplit[1]) + "." + str(IPsplit[2]) + "." + str(h2)
-                string1 = "Network " + str(i+1)  + ") "+ str(net) +  " - " + str(net1)
+                string1 = f"Network {i+1}) 172.{IPsplit[1]}.{IPsplit[2]}.{IPsplit[3]} - 172.{IPsplit[1]}.{IPsplit[2]}.{IPsplit[3] + h2}"
                 if printVal:
                     print(string1)
                 if saveToFile:
                     f.write(string1)
                     f.write("\n")
                 IPsplit[3]+=increment
-                h2+=increment
                 if IPsplit[3]==256:
-                    IPsplit[3]*=0
-                    IPsplit[2]+=1
-                    h2 = increment - 1  
+                    IPsplit[3]=0
+                    IPsplit[2]+=1 
     elif IPClass=="c":
-        increment = 256 / networks
-        increment = int(increment)
+        increment = int(256 / networks)
         usersPerNetwork = increment
         h2 = increment - 1
         for i in range(networks):
-            net=str(IPsplit[0]) + "." + str(IPsplit[1]) + "." + str(IPsplit[2]) + "." + str(IPsplit[3])
-            net1 = str(IPsplit[0]) + "." + str(IPsplit[1]) + "." + str(IPsplit[2]) + "." + str(h2)
-            print("Network "+ str(i+1)+ ") "+ net+ " - "+ net1)
+            string1 = f"Network {i+1}) 192.168.{IPsplit[2]}.{IPsplit[3]} - 192.168.{IPsplit[2]}.{h2}"
+            if printVal:
+                print(string1)
+            if saveToFile:
+                f.write(string1)
+                f.write("\n")
             IPsplit[3]+=increment
             h2+=increment
 
@@ -476,11 +450,11 @@ if not gotMask:
         IPString+= "0 "*(4-(inp//255))
     IP = list(map(int, IPString.split()))
 
-string1 = "\nSubnet mask: " + str(IP[0])+"."+str(IP[1])+"."+str(IP[2])+"."+str(IP[3]) + " | /" +str(CIDR) + "\n"
+string1 = f"\nSubnet mask: {IP[0]}.{IP[1]}.{IP[2]}.{IP[3]} | / {CIDR}\n"
 if networks > 1:
-    defaultCIDR = str(networks)+" networks with "+str(usersPerNetwork)+" users per network"#reusig this var to save memory
+    defaultCIDR = f"{networks} networks with {usersPerNetwork} users per network"
 else:
-    defaultCIDR = str(networks)+" network with "+str(usersPerNetwork)+" users"#reusig this var to save memory
+    defaultCIDR = f"{networks} network with {usersPerNetwork} users"
 if printVal:
     print(string1)
     print(defaultCIDR)
