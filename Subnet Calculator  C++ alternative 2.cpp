@@ -431,7 +431,6 @@ int main() {
 		prepareBroadcastIP(netIPSplit, broIPSplit, 4 - (defaultCIDR / 8));
 
 	int OctetToModify = 0;
-	int unacceptableOct = defaultCIDR / 8;
 	
 	if (networks > 1)
 		OctetToModify = (log2(networks) - 1 + defaultCIDR) / 8;
