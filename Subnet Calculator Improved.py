@@ -83,7 +83,7 @@ while True:
             CIDR = inp
             # break
         else:
-            print("Out of bounds. CIDR for this class is [%d to 30]" % defaultCIDR);continue
+            print(f"Out of bounds. CIDR for this class is [{defaultCIDR} to 30]");continue
     elif inp.count(".")==0: # num
         try:
             networks = int(inp)
@@ -94,9 +94,9 @@ while True:
             if holder!=holder//1: # if it is not possible, then holder would be a decimal, and it would need to be adjusted
                 networks = 2**((holder//1)+1)
                 networks = int(networks)
-                print("Networks updated to ", networks)
+                print(f"Networks updated to {networks}")
         else:
-            print("Out of bounds. Number of networks for this class are [1 to %d]" % maxNetworks) ; continue
+            print(f"Out of bounds. Number of networks for this class are [1 to {maxNetworks}]") ; continue
     else: # IP
         while True:
             if inp[-1]!=".":
@@ -132,14 +132,17 @@ while True:
         CIDR = 255
         h2 = False
         for i in range(len(inp)-1):
-            CIDR+=inp[i+1] 
+            if inp[i+1] > 255:
+                h2 = True
+                break
+            CIDR+=inp[i+1]
             holder = log2(256 - inp[i+1])
             if inp[i+1]>inp[i] or holder != (holder//1) or inp[i]!=255 and inp[i+1]!=0:
                 h2 = True
-                print("Invalid Subnet Mask: %d is not a valid octet" % inp[i+1])
                 break
 
         if h2:
+            print(f"Invalid Subnet Mask: {inp[i+1]} is not a valid octet")
             continue
         else:
             if inp[-1]<=252:
@@ -155,7 +158,7 @@ while True:
                 gotMask = True
                 # break
             else:
-                print("It's not practical to have the last octet as %d" % inp[-1]) ; continue
+                print(f"It's not practical to have the last octet as {inp[-1]}") ; continue
     
     if networks>1024: # if input says we have to print more than 1024, it could cause issues in some terminals,
         # so we give two options
@@ -211,10 +214,10 @@ if customRange:
     while True: # ask for the range, and input validate. This should return a list with all networks to process
         inp = input("Enter range | Format [34-40] or [12, 14-18] >> ")
         if inp == "":
-            print("Enter any range or number between 1 and", networks)
+            print(f"Enter any range or number between 1 and {networks}")
             continue
         if not inp[len(inp)-1].isdigit():
-            print("Try again. Range does not end in", inp[len(inp)-1])
+            print(f"Try again. Range does not end in '{inp[len(inp)-1]}'")
             continue
         inp = inp.replace(" ", "")
         inp = inp.split(",")
@@ -252,7 +255,7 @@ if customRange:
             if inp[len(inp)-1]<networks and inp[0] >= 0:
                 break
             else:
-                print("One of your networks is outside the range [ 1 -", networks, "]")
+                print(f"One of your networks is outside the range [1 - {networks}]")
                 continue
         else:
             if saveToFile:
