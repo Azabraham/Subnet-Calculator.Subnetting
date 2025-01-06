@@ -132,17 +132,19 @@ while True:
         CIDR = 255
         h2 = False
         for i in range(len(inp)-1):
+            if h2:
+                print(f"Invalid Subnet Mask: {inp[i]} is not a valid octet")
+                break
             if inp[i+1] > 255:
                 h2 = True
-                break
+                continue
             CIDR+=inp[i+1]
             holder = log2(256 - inp[i+1])
             if inp[i+1]>inp[i] or holder != (holder//1) or inp[i]!=255 and inp[i+1]!=0:
                 h2 = True
-                break
+                continue
 
         if h2:
-            print(f"Invalid Subnet Mask: {inp[i+1]} is not a valid octet")
             continue
         else:
             if inp[-1]<=252:
