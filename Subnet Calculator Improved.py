@@ -11,6 +11,7 @@ gotMask = False
 saveToFile = False
 customRange = False
 printVal = True
+
 #First input: Class of IP, and Input Validation
 while True:
     IPClass = input("Enter IP Class (A, B, or C): ")
@@ -63,12 +64,14 @@ while True:
         print("Enter how many networks [Ex: 16], or subnet mask as CIDR or IP [Ex: /24 or 255.255.0.0]")
         continue
     
+    # Input sanitation
     inp = inp.replace(",", ".")
         
     if '"' in inp:
         inp = inp.replace('"', "")
 
-    if inp[0]=="/": # CIDR
+    #CIDR
+    if inp[0]=="/":
         inp2 = ""
         for i in inp:
             if i.isdigit():
@@ -98,10 +101,13 @@ while True:
         else:
             print(f"Out of bounds. Number of networks for this class are [1 to {maxNetworks}]") ; continue
     else: # IP
+        #Sanitizing input
         while True:
             if inp[-1]!=".":
                 break
             inp = inp[:-1:]
+        
+        #Completing user input
         if inp.count(".") < 3:
             inp += ((3 - inp.count(".")) * ".0")
 
