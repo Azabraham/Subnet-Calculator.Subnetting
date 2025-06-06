@@ -14,44 +14,68 @@ printVal = True
 
 #First input: Class of IP, and Input Validation
 while True:
-    IPClass = input("Enter IP Class (A, B, or C): ")
+
+    try:
+        IPClass = input("Enter IP Class (A, B, or C): ")
+    except KeyboardInterrupt:
+        exit()
+    
     IPClass = IPClass.lower()
-    if IPClass=="a" or IPClass=="b" or IPClass=="c":
+    
+    if IPClass in ["a", "b", "c"]:
         break
     else:
-        print("Wrong IP Class [A, B, or C only]")
+        print("Calculator only support classes A, B, or C")
+
 #Second input (in applicable): IP address, and input validation depending on the class
 if IPClass=="a":
+
     print("IP used: 10.0.0.0")
     IPsplit = [10, 0, 0, 0]
+
 elif IPClass=="b":
+
     defaultCIDR = 16
     maxNetworks = 16384
+
     while True:
-        IP = input("Enter IP: ")
+        
         try:
+            IP = input("Enter IP: ")
             IPsplit = IP.split(".")
             IPsplit = list(map(int, IPsplit))
-        except:
+        except ValueError:
             print("IP addresses have dots and numbers 0-255 [#.#.#.#]")
             continue
+        except KeyboardInterrupt:
+            exit()
         
-        if IPsplit[0]==172 and IPsplit[1]>15 and IPsplit[1]<32 and IPsplit[2]==0 and IPsplit[3]==0:
+        if IPsplit[0]==172 and IPsplit[1]>15 and IPsplit[1]<32:
+            IPsplit[2] = 0
+            IPsplit[3] = 0
             break
         else:
             print("Incorrect IP, try again [range is 172.16.0.0 to 172.31.0.0]")
+
 elif IPClass=="c":
+
     defaultCIDR = 24
     maxNetworks = 64
+
     while True:
-        IP = input("Enter IP: ")
+
         try:
+            IP = input("Enter IP: ")
             IPsplit = IP.split(".")
             IPsplit = list(map(int, IPsplit))
-        except:
-            print("IP addresses have dots and numbers 0-255 [#.#.#.#]") ; continue
-    
-        if IPsplit[0]==192 and IPsplit[1]==168 and IPsplit[2]>=0 and IPsplit[2]<256  and IPsplit[3]==0:
+        except ValueError:
+            print("IP addresses have dots and numbers 0-255 [#.#.#.#]")
+            continue
+        except KeyboardInterrupt:
+            exit()
+
+        if IPsplit[0]==192 and IPsplit[1]==168 and IPsplit[2]>=0 and IPsplit[2]<256:
+            IPsplit[3] = 0
             break
         else:
             print("Incorrect IP, try again [range is 192.168.0.0 to 192.168.255.0]")
