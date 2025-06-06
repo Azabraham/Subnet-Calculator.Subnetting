@@ -1,4 +1,4 @@
-from math import log2
+from math import log2, ceil
 
 IPClass = "a"
 IP = "10.0.0.0"
@@ -87,7 +87,7 @@ while True:
         inp = input("Enter number of networks or subnet mask [\"12\", \"/22\" or \"255.255.255.128\"]: ")
     except KeyboardInterrupt:
         exit()
-        
+
     if len(inp)==0:
         print("Enter how many networks [Ex: 16], or subnet mask as CIDR or IP [Ex: /24 or 255.255.0.0]")
         continue
@@ -99,35 +99,42 @@ while True:
         inp = inp.replace('"', "")
 
     #CIDR
-    if inp[0]=="/":
-        inp2 = ""
-        for i in inp:
-            if i.isdigit():
-                inp2+=i
-        try:
-            inp = int(inp2)
-        except:
-            print("Incorrect CIDR");continue
-        if inp>=defaultCIDR and inp<31:
-            networks = 2**(inp-defaultCIDR)
+    if inp[0] == "/":
+
+        if inp[1:].isnumeric():
+            inp = int(inp[1:])
+        else:
+            print("Incorrect CIDR")
+            continue
+        
+        if inp >= defaultCIDR and inp < 31:
+            networks = 2**(inp - defaultCIDR)
             gotCIDR = True
             CIDR = inp
-            # break
+            # break (Not break?)
         else:
             print(f"Out of bounds. CIDR for this class is [{defaultCIDR} to 30]");continue
-    elif inp.count(".")==0: # num
+    
+    elif inp.count(".") == 0: # num
+
         try:
             networks = int(inp)
-        except:
-            print("Enter a valid number.");continue
-        if networks > 0 and networks <= maxNetworks:
-            holder = log2(networks) # This is used to determine if network input is possible
-            if holder!=holder//1: # if it is not possible, then holder would be a decimal, and it would need to be adjusted
-                networks = 2**((holder//1)+1)
-                networks = int(networks)
+        except ValueError:
+            print("Enter a valid number.")
+            continue
+
+        # AI-enhanced clause
+        if 0 < networks <= maxNetworks: # Acceptable range is [0 through maxNetworks]
+            
+            tmp = log2(networks) # This is used to determine if network input is possible
+            
+            if tmp % 1 != 0: # If this is true, then the networks are not a power of 2, so they are not an acceptable network range
+                networks = 2**ceil(tmp) # In such case, it is adjusted to the next power of 2
                 print(f"Networks updated to {networks}")
         else:
-            print(f"Out of bounds. Number of networks for this class are [1 to {maxNetworks}]") ; continue
+            print(f"Out of bounds. Number of networks for this class are [1 to {maxNetworks}]")
+            continue
+    
     else: # IP
         #Sanitizing input
         while True:
