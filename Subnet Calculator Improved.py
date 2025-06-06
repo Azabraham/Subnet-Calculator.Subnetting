@@ -82,8 +82,12 @@ elif IPClass=="c":
 
 #Third input: number of networks, and input validation
 while True:
-    inp = input("Enter number of networks or subnet mask [\"12\", \"/22\" or \"255.255.255.128\"]: ")
 
+    try:
+        inp = input("Enter number of networks or subnet mask [\"12\", \"/22\" or \"255.255.255.128\"]: ")
+    except KeyboardInterrupt:
+        exit()
+        
     if len(inp)==0:
         print("Enter how many networks [Ex: 16], or subnet mask as CIDR or IP [Ex: /24 or 255.255.0.0]")
         continue
