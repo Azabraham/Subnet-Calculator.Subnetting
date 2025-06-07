@@ -222,8 +222,14 @@ while True:
             
 # User is prompted to save to file
 if not saveToFile:
-    inp = input("Would you like to save to file? (y/n): ")
+
+    try:
+        inp = input("Would you like to save to file? (y/n): ")
+    except KeyboardInterrupt:
+        exit()
+
     inp = inp.lower()
+
     if inp == "": # If user just presses enter, by default it will not save
         saveToFile = False
     elif inp[0]=="y" or inp == "yes" or inp == "1":
@@ -232,16 +238,31 @@ if not saveToFile:
         saveToFile = False
 
 if saveToFile:
-    inp = input("Enter file name: ") + ".txt"
+    try:
+        inp = input("Enter file name: ") + ".txt"
+    except KeyboardInterrupt:
+        exit()
     f = open(inp, 'w') # This could be improved by checking if file already exists
 
 # Program asks if all networks are displayed or saved, if not, a different way to get to the answer is used.
 if not customRange and networks > 1:
     if saveToFile:
-        inp = input("Save all networks to file? (y/n): ")
+
+        try:
+            inp = input("Save all networks to file? (y/n): ")
+        except KeyboardInterrupt:
+            f.close()
+            exit()
+
     else:
-        inp = input("Display all networks? (y/n): ")
+
+        try:
+            inp = input("Display all networks? (y/n): ")
+        except KeyboardInterrupt:
+            exit()
+
     inp = inp.lower()
+    
     if inp == "": # By default, answer will be yes
         customRange = False
     elif inp[0]=="n" or inp == "no" or inp == "0":
