@@ -147,32 +147,29 @@ while True:
             inp += ((3 - inp.count(".")) * ".0")
 
         try:
-            inp = inp.split(".")
-        except:
-            print("Enter a valid subnet mask: ") ; continue
-        
-        if len(inp)!=4:
-            print("You entered more than 4 octets.") ; continue
+            inp = list(map(int, inp.split("."))) 
+        except ValueError:
+            print("Enter a valid subnet mask.")
+            continue
 
-    
-        if inp[0]!="255":
+        if len(inp) != 4:
+            print("Subnet masks are 4 octets.")
+            continue
+
+        if inp[0] != 255:
             print("Subnet masks regardless of class have the first 1st octet = 255")
             continue
-        
-        if IPClass=="b" and inp.count("255")<2:
-            print("The first 2 octets for a Class B subnet mask are 255")
+
+        if IPClass=="b" and inp.count(255) < 2:
+            print("The first 2 octets of a Class B subnet mask are 255")
             continue
-        elif IPClass=="c" and inp.count("255")<3:
+        elif IPClass=="c" and inp.count(255) < 3:
             print("The first 3 octets of a class C subnet mask are 255")
             continue
-
-        try:
-            inp = list(map(int, inp))
-        except:
-            print("Enter valid numbers") ; continue
+        # 
         CIDR = 255
         h2 = False
-        for i in range(len(inp)-1):
+        for i in range(3):
             if h2:
                 print(f"Invalid Subnet Mask: {inp[i]} is not a valid octet")
                 break
