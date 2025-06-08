@@ -19,6 +19,9 @@ while True:
         IPClass = input("Enter IP Class (A, B, or C): ")
     except KeyboardInterrupt:
         exit()
+
+    if not IPClass:
+        continue
     
     IPClass = IPClass.lower()
     
@@ -49,7 +52,7 @@ elif IPClass=="b":
             continue
         except KeyboardInterrupt:
             exit()
-        
+   
         if IPsplit[0]==172 and IPsplit[1]>15 and IPsplit[1]<32:
             IPsplit[2] = 0
             IPsplit[3] = 0
@@ -88,7 +91,7 @@ while True:
     except KeyboardInterrupt:
         exit()
 
-    if len(inp)==0:
+    if not inp:
         print("Enter how many networks [Ex: 16], or subnet mask as CIDR or IP [Ex: /24 or 255.255.0.0]")
         continue
     
@@ -111,9 +114,10 @@ while True:
             networks = 2**(inp - defaultCIDR)
             gotCIDR = True
             CIDR = inp
-            # break (Not break?)
+            break # (Not break?)
         else:
-            print(f"Out of bounds. CIDR for this class is [{defaultCIDR} to 30]");continue
+            print(f"Out of bounds. CIDR for this class is [{defaultCIDR} to 30]")
+            continue
     
     elif inp.count(".") == 0: # num
 
@@ -131,6 +135,7 @@ while True:
             if tmp % 1 != 0: # If this is true, then the networks are not a power of 2, so they are not an acceptable network range
                 networks = 2**ceil(tmp) # In such case, it is adjusted to the next power of 2
                 print(f"Networks updated to {networks}")
+            break
         else:
             print(f"Out of bounds. Number of networks for this class are [1 to {maxNetworks}]")
             continue
@@ -168,57 +173,58 @@ while True:
             continue
         # 
         CIDR = 255
-        h2 = False
-        for i in range(3):
-            if h2:
-                print(f"Invalid Subnet Mask: {inp[i]} is not a valid octet")
-                break
-            if inp[i+1] > 255:
-                h2 = True
-                continue
-            CIDR+=inp[i+1]
-            holder = log2(256 - inp[i+1])
-            if inp[i+1]>inp[i] or holder != (holder//1) or inp[i]!=255 and inp[i+1]!=0:
-                h2 = True
-                continue
 
-        if h2:
-            continue
+        for i in range(3):
+            if inp[i + 1] > 255:
+                print(f"The octet '{inp[i + 1]}' is incorrect.")
+                break
+
+            tmp = log2(256 - inp[i + 1])
+
+            if inp[i+1] > inp[i] or tmp % 1 != 0:
+                print(f"The octet '{inp[i+1]}' is incorrect.")
+                break
+
+            CIDR += inp[i + 1]
         else:
-            if inp[-1]<=252:
-                if CIDR / 255 != CIDR // 255:
-                    CIDR=log2(256/(256-(CIDR%255)))
+            if inp[3] <= 252:
+                if CIDR % 255 != 0:
+                    CIDR = log2( 256 / ( 256 - ( CIDR % 255 ) ) )
                 else:
                     CIDR = 0
+
                 CIDR += (inp.count(255) * 8)
                 CIDR = int(CIDR)
+
                 networks = 2**(CIDR - defaultCIDR)
+
                 IP = inp
                 gotCIDR = True
                 gotMask = True
-                # break
-            else:
-                print(f"It's not practical to have the last octet as {inp[-1]}") ; continue
-    
-    if networks>1024: # if input says we have to print more than 1024, it could cause issues in some terminals,
-        # so we give two options
-        while True:
-            try:
-                inp = int(input("Too many networks to display. 2 options:\nType 1) Save to file\nType 2) Display custom range\n Your answer >> "))
-            except:
-                print("Enter a number") ; continue
-            if inp==1:
-                saveToFile = True
-                printVal = False
-                break
-            elif inp==2:
-                customRange = True
                 break
             else:
-                print("No such option")
-        break
-    else:
-        break
+                print(f"It's not practical to have the last octet as {inp[3]}")
+        
+if networks>1024: # if input says we have to print more than 1024, it could cause issues in some terminals,
+    # so we give two options
+    while True:
+        try:
+            inp = int(input("Too many networks to display. 2 options:\nType 1) Save to file\nType 2) Display custom range\n Your answer >> "))
+        except ValueError:
+            print("Enter a number (1 or 2)")
+            continue
+        except KeyboardInterrupt:
+            exit()
+
+        if inp == 1:
+            saveToFile = True
+            printVal = False
+            break
+        elif inp == 2:
+            customRange = True
+            break
+        else:
+            print("No such option")
             
 # User is prompted to save to file
 if not saveToFile:
@@ -246,6 +252,7 @@ if saveToFile:
 
 # Program asks if all networks are displayed or saved, if not, a different way to get to the answer is used.
 if not customRange and networks > 1:
+
     if saveToFile:
 
         try:
@@ -262,7 +269,7 @@ if not customRange and networks > 1:
             exit()
 
     inp = inp.lower()
-    
+
     if inp == "": # By default, answer will be yes
         customRange = False
     elif inp[0]=="n" or inp == "no" or inp == "0":
@@ -273,7 +280,14 @@ if not customRange and networks > 1:
 # Engine 1: Prints networks based on a custom range
 if customRange:
     while True: # ask for the range, and input validate. This should return a list with all networks to process
-        inp = input("Enter range | Format [34-40] or [12, 14-18] >> ")
+        
+        try:
+            inp = input("Enter range | Format [34-40] or [12, 14-18] >> ")
+        except KeyboardInterrupt:
+            if saveToFile: # Is file open?
+                f.close()
+            exit()
+
         if inp == "":
             print(f"Enter any range or number between 1 and {networks}")
             continue
@@ -514,7 +528,7 @@ if not gotMask:
         IPString+= "0 "*(4-(inp//255))
     IP = list(map(int, IPString.split()))
 
-string1 = f"\nSubnet mask: {IP[0]}.{IP[1]}.{IP[2]}.{IP[3]} | / {CIDR}\n"
+string1 = f"\nSubnet mask: {IP[0]}.{IP[1]}.{IP[2]}.{IP[3]} | /{CIDR}\n"
 if networks > 1:
     defaultCIDR = f"{networks} networks with {usersPerNetwork} users per network"
 else:
