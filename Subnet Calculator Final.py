@@ -400,7 +400,6 @@ if printVal:
     print(string1)
     print(defaultCIDR)
 
-print()
 
 if saveToFile:
     f.write(string1)
@@ -408,5 +407,5 @@ if saveToFile:
     f.write("\n")
     f.close()
 
-# input("[ Press 2 times to exit ] ")
-# input("[ Press 1 time to exit ] ")
+input("\n[ Press [ENTER] 2 times to exit ] ")
+input(  "[ Press [ENTER] 1 time to exit ] ")
