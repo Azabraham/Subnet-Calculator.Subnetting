@@ -245,11 +245,19 @@ if not save_to_file:
         save_to_file = False
 
 if save_to_file:
-    try:
-        inp = input("Enter file name: ") + ".txt"
-    except KeyboardInterrupt:
-        exit()
-    f = open(inp, 'w')
+    while True:
+        try:
+            inp = input("Enter file name: ") + ".txt"
+        except KeyboardInterrupt:
+            exit()
+        
+        try:
+            f = open(inp, 'x')
+        except FileExistsError:
+            print("File already exists. Try a different name.")
+            continue
+        
+        break
 
 # Program asks if all networks are displayed or saved, if not, a different way to get to the answer is used.
 if not custom_range and networks > 1:
